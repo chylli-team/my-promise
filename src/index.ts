@@ -1,3 +1,4 @@
+// TODO check all throw Error, to change croak it to print line number of caller
 export default class Future<T> {
     private _ready: boolean;
     private _cancelled: boolean | null;
@@ -86,7 +87,11 @@ export default class Future<T> {
         console.log("not implemented");
     }
     
-    get(){
+    public get(){
+        if(!this.is_ready){
+            throw new Error(`Future ${this.id} is not yet completed`);
+        }
+
         return this._result;
         console.log("not implemented");
     }
