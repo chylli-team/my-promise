@@ -8,7 +8,18 @@ describe('Future', () => {
         });
     });
 
+    describe('id', () => {
+        it('should have a id', () => {
+            const future = new Future();
+            expect(future.id).toBe(1);
+        });
+        it('should be increated when a new Future created', () => {
+            const future = new Future();
+            expect(future.id).toBe(2);
+        });
 
+    });
+    describe('done', () => {
         let future: Future<number>;
 
         beforeEach(() => {
@@ -24,13 +35,10 @@ describe('Future', () => {
             future.done(42);
             expect(future.get()).toBe(42); // assuming you have a getResult method
         });
-        it('should have a id', () => {
-            expect(future.id).toBe(4);
-        });
         it('should not be done twice', () => {
             future.done(42);
-            expect(() => future.done(42)).toThrow('Future 5 is already complete and cannot be done twice');
+            expect(() => future.done(42)).toThrow(`Future ${future.id} is already complete and cannot be done twice`);
         });
         // TODO test that the future cannot be done if it is not a leaf future
-
+    });
 });
