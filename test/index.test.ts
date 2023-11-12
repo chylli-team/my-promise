@@ -41,4 +41,28 @@ describe('Future', () => {
         });
         // TODO test that the future cannot be done if it is not a leaf future
     });
+    // create a fail test like done test
+    describe('fail', () => {
+        let future: Future<number>;
+
+        beforeEach(() => {
+            future = new Future<number>();
+        });
+
+        it('should mark the future as ready when fail is called', () => {
+            future.fail(new Error());
+            expect(future.is_ready).toBe(true); // assuming you have an isReady method
+        });
+
+        it('should store the error when fail is called', () => {
+            const error = new Error();
+            future.fail(error);
+            expect(future.failure).toBe(error); // assuming you have a getResult method
+        });
+        it('should not be fail twice', () => {
+            future.fail(new Error());
+            expect(() => future.fail(new Error())).toThrow(`Future ${future.id} is already complete and cannot be .fail `);
+        });
+        // TODO test that the future cannot be fail if it is not a leaf future
+    });
 });
