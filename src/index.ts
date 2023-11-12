@@ -1,4 +1,7 @@
 // TODO check all throw Error, to change croak it to print line number of caller
+interface Result<T> {
+    value: T 
+}
 
 export default class Future<T> {
     private _ready: boolean;
@@ -6,7 +9,7 @@ export default class Future<T> {
     private _callbacks: Array<Function>;
     private static _lastId: number = 0;    
     private _id: number;
-    private _result: T | undefined;
+    private _result: Result<T> | undefined;
     private _failure: Error | undefined;
 
     constructor() {
@@ -57,7 +60,7 @@ export default class Future<T> {
         if(this._result){
             throw new Error(`Future ${this.id} is not a leaf Future, cannot be .done`);           
         }
-        this._result = result;
+        this._result = {value: result};
         this._mark_ready();
         return this;
     }
@@ -89,6 +92,7 @@ export default class Future<T> {
 
     get is_cancelled(): boolean | undefined {
         return this._cancelled;
+        //TODO not finished
     }
     
     get is_ready(){
@@ -99,13 +103,21 @@ export default class Future<T> {
         console.log("not implemented");
     }
     
-    public get(){
+    public get(): T{
         if(!this.is_ready){
             throw new Error(`Future ${this.id} is not yet completed`);
         }
+        if(this._failure){
+            throw this._failure;
+        }
+        if(this.is_cancelled){
+            throw new Error(`Future ${this.id} is cancelled`);
+        }
 
-        return this._result;
-        console.log("not implemented");
+        if(this._result === undefined){
+            throw new Error(`Future ${this.id} is undefined, cannot be .get`)
+        }
+        return this._result.value;
     }
     
     on_done(){
